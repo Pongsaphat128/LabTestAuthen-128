@@ -1,9 +1,8 @@
 import 'package:authentest_128/Pages/login.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-
 import '../service/auth_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class completelogin extends StatefulWidget {
   const completelogin({super.key});
@@ -22,11 +21,10 @@ class _completeloginState extends State<completelogin> {
       body: SafeArea(
         child: ListView(
           children: [
-            Text("Login complete"),
-            Icon(Icons.check_outlined, color: Colors.green),
             ElevatedButton(
                 onPressed: () {
                   AuthService.logOutUser();
+
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => Loginpage()));
                 },
@@ -35,5 +33,23 @@ class _completeloginState extends State<completelogin> {
         ),
       ),
     );
+  }
+
+  List<Widget> createDataList(QuerySnapshot<Map<String, dynamic>>? data) {
+    List<Widget> widgets = [];
+    widgets = data!.docs.map((doc) {
+      var data = doc.data();
+      print(data['product_name']);
+      return ListTile(
+        onTap: () {
+          print(doc.id);
+          // ดึงข้อมูล มาแสดง เพื่อแก้ไข
+        },
+        title: Text(data['name'] + ", " + data['tel'].toString() + ""),
+        subtitle: Text(data['type']),
+      );
+    }).toList();
+
+    return widgets;
   }
 }
